@@ -29,12 +29,12 @@ public class KeyHandler implements KeyListener {
 		if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) {
 			rightPressed = true;
 		}
-		if (code == KeyEvent.VK_UP) {
-			gp.zoomInOut(1);
-		}
-		if (code == KeyEvent.VK_DOWN) {
-			gp.zoomInOut(-1);
-		}
+//		if (code == KeyEvent.VK_UP) {
+//			gp.zoomInOut(1);
+//		}
+//		if (code == KeyEvent.VK_DOWN) {
+//			gp.zoomInOut(-1);
+//		}
 		
 	}
 
