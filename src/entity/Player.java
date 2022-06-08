@@ -40,8 +40,11 @@ public class Player extends Entity {
 		worldX = gp.tileSize * 23;
 		worldY = gp.tileSize * 21;
 		speed = 4;
-		
 		direction = "down";
+		
+		// PLAYER STATUS
+		maxLife = 6;
+		life = maxLife;
 
 	}
 
@@ -81,13 +84,18 @@ public class Player extends Entity {
 			collisionOn = false;
 			gp.cChecker.checkTile(this);
 			
-			//CHECK OBJECT COLLISION
+			// CHECK OBJECT COLLISION
 			int objIndex = gp.cChecker.checkObject(this, true);
 			pickUpObject(objIndex);
 			
-			//CHECK NPC COLLISION
+			// CHECK NPC COLLISION
 			int npcIndex = gp.cChecker.checkEntity(this, gp.npc);
 			interactNPC(npcIndex);
+			
+			// CHECK EVENT
+			gp.eHandler.checkEvent();
+			
+			gp.keyH.enterPressed = false;
 			
 			// IF COLLISION IS FALSE, PLAYER CAN MOVE
 			if(collisionOn == false) {
@@ -150,7 +158,6 @@ public class Player extends Entity {
 			}
 			
 		}
-		gp.keyH.enterPressed = false;
 		
 	}
 
