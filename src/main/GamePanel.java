@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -39,8 +41,9 @@ public class GamePanel extends JPanel implements Runnable {
 	KeyHandler keyH = new KeyHandler(this);
 	Thread gameThread;
 	public CollisionChecker cChecker = new CollisionChecker(this);
+	public AssetSetter aSetter = new AssetSetter(this);
 	public Player player = new Player(this,keyH);
-	
+	public SuperObject obj[] = new SuperObject[10];
 	
 	public GamePanel() {
 		
@@ -52,24 +55,57 @@ public class GamePanel extends JPanel implements Runnable {
 		
 	}
 	
-	public void zoomInOut(int i) {
+	public void setupGame() {
 		
-		int oldWorldWidth = tileSize * maxWorldCol; // 2400
-		tileSize += i;
-		int newWorldWidth = tileSize * maxWorldCol; // 2350
-		
-		player.speed = (double)newWorldWidth/600;
-		
-		double multiplier = (double)newWorldWidth/oldWorldWidth; // 0.97
-		
-		double newPlayerWorldX = player.worldX * multiplier;
-		double newPlayerWorldY = player.worldY * multiplier;
-		
-		player.worldX = newPlayerWorldX;
-		player.worldY = newPlayerWorldY;
-		
+		aSetter.setObject();
 		
 	}
+	
+//	Zoom function
+//	public void zoomInOut(int i) {
+//		
+//		int oldWorldWidth = tileSize * maxWorldCol; // 2400
+//		tileSize += i;
+//		int newWorldWidth = tileSize * maxWorldCol; // 2350
+//		
+//		player.speed = (double)newWorldWidth/600;
+//		
+//		double multiplier = (double)newWorldWidth/oldWorldWidth; // 0.97
+//		
+//		double newPlayerWorldX = player.worldX * multiplier;
+//		double newPlayerWorldY = player.worldY * multiplier;
+//		
+//		// zoom of objects
+//		for(int j = 0; j < obj.length; j++) {
+//			
+//			if(obj[j] != null) {
+//				
+//				double newObjectWorldX = obj[j].worldX * multiplier;
+//				double newObjectWorldY = obj[j].worldY * multiplier;
+//				
+//				obj[j].worldX = newObjectWorldX;
+//				obj[j].worldY = newObjectWorldY;
+//				
+//			}
+//			
+//		}
+//		
+//		// zoom of player
+//		player.worldX = newPlayerWorldX;
+//		player.worldY = newPlayerWorldY;
+//		
+//		// zoom of player solid area
+//		double newPlayerSolidX = player.solidArea.x * multiplier;
+//		double newPlayerSolidY = player.solidArea.y * multiplier;
+//		double newPlayerSolidWidth = player.solidArea.width * multiplier;
+//		double newPlayerSolidHeight = player.solidArea.height * multiplier;
+//		
+//		player.solidArea.x = newPlayerSolidX;
+//		player.solidArea.y = newPlayerSolidY;
+//		player.solidArea.width = newPlayerSolidWidth;
+//		player.solidArea.height = newPlayerSolidHeight;
+//		
+//	}
 	
 	public void startGameThread() {
 		
@@ -125,10 +161,21 @@ public class GamePanel extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		
 		super.paintComponent(g);
-		
 		Graphics2D g2 = (Graphics2D)g;
 		
+		// TILES
 		tileManager.draw(g2);
+		
+		// OBJECT
+		for(int i = 0; i < obj.length; i++) {
+			
+			if(obj[i] != null) {
+				obj[i].draw(g2, this);
+			}
+			
+		}
+		
+		// PLAYER
 		player.draw(g2);
 		
 		g2.dispose();
