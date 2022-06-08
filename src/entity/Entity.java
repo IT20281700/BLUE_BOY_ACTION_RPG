@@ -23,6 +23,8 @@ public class Entity {
 	public double solidAreaDefaultX, solidAreaDefaultY;
 	public boolean collisionOn = false;
 	public int actionLockCounter = 0;
+	String dialouges[] = new String[20];
+	int dialougeIndex = 0;
 	
 
 	public Entity(GamePanel gp) {
@@ -30,6 +32,31 @@ public class Entity {
 	}
 	
 	public void setAction() {
+		
+	}
+	
+	public void speak() {
+		
+		if(dialouges[dialougeIndex] == null) {
+			dialougeIndex = 0;
+		}
+		gp.ui.currentDialouge = dialouges[dialougeIndex];
+		dialougeIndex++;
+		
+		switch (gp.player.direction) {
+		case "up":
+			direction = "down";
+			break;
+		case "down":
+			direction = "up";
+			break;
+		case "left":
+			direction = "right";
+			break;
+		case "right":
+			direction = "left";
+			break;
+		}
 		
 	}
 	

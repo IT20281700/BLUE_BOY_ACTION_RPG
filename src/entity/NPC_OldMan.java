@@ -13,6 +13,7 @@ public class NPC_OldMan extends Entity{
 		speed = 1;
 		
 		getImage();
+		setDialouge();
 	}
 	
 	public void getImage() {
@@ -26,6 +27,15 @@ public class NPC_OldMan extends Entity{
 		right1 = setup("/npc/oldman_right_1");
 		right2 = setup("/npc/oldman_right_2");
 
+	}
+	
+	public void setDialouge() {
+		
+		dialouges[0] = "Hello, Chamod.";
+		dialouges[1] = "So you've come to this \nisland to find the treasure?";
+		dialouges[2] = "I used to be a great wizard \nbut now... I'm a bit too \nold for taking an adventure.";
+		dialouges[3] = "Well, good luck on you.";
+		
 	}
 	
 	public void setAction() {
@@ -53,6 +63,14 @@ public class NPC_OldMan extends Entity{
 			actionLockCounter = 0;
 			
 		}
+		
+	}
+	
+	public void speak() {
+		
+		// Do this character specific stuff
+		
+		super.speak();
 		
 	}
 
