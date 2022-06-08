@@ -1,2 +1,2 @@
-# 2D_Adventure
-Simple 2D Adventure Game
+# BLUE_BOY_ACTION_RPG
+Blue man rpg game
