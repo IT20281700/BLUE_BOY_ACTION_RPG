@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import main.GamePanel;
+import main.UtilityTool;
 
 public class SuperObject {
 
@@ -15,6 +16,7 @@ public class SuperObject {
 	public Rectangle2D.Double solidArea = new Rectangle2D.Double(0, 0, 48, 48);
 	public double solidAreaDefaultX = 0;
 	public double solidAreaDefaultY = 0;
+	UtilityTool uTool = new UtilityTool();
 
 	public void draw(Graphics2D g2, GamePanel gp) {
 
