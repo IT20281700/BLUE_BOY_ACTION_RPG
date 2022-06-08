@@ -1,7 +1,6 @@
 package entity;
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class Entity {
@@ -14,8 +13,7 @@ public class Entity {
 	
 	public int spriteCounter = 0;
 	public int spriteNum = 1;
-	public Rectangle2D.Double solidArea;
-	public double solidAreaDefaultX, solidAreaDefaultY;
+	public Rectangle solidArea;
 	public boolean collisionOn = false;
 	
 }
