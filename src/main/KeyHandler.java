@@ -20,10 +20,10 @@ public class KeyHandler implements KeyListener {
 		
 		int code = e.getKeyCode();
 
-		if (code == KeyEvent.VK_W) {
+		if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
 			upPressed = true;
 		}
-		if (code == KeyEvent.VK_S) {
+		if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) {
 			downPressed = true;
 		}
 		if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) {
@@ -38,6 +38,13 @@ public class KeyHandler implements KeyListener {
 //		if (code == KeyEvent.VK_DOWN) {
 //			gp.zoomInOut(-1);
 //		}
+		if (code == KeyEvent.VK_P) {
+			if(gp.gameState == gp.playState) {
+				gp.gameState = gp.pauseState;
+			} else if(gp.gameState == gp.pauseState) {
+				gp.gameState = gp.playState;
+			}
+		}
 		
 		// DEBUG
 		if (code == KeyEvent.VK_T) {
