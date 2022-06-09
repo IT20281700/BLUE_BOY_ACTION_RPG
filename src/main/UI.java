@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import entity.Entity;
+import java.util.ArrayList;
 import object.OBJ_Heart;
 
 public class UI {
@@ -20,11 +21,13 @@ public class UI {
     public Font maruMonica, purisaB;
     BufferedImage heart_full, heart_half, heart_blank;
     public boolean messageOn = false;
-    public String message = "";
-    int messageCounter = 0;
+    ArrayList<String> message = new ArrayList<>();
+    ArrayList<Integer> messageCounter = new ArrayList<>();
     public boolean gameFinished = false;
     public String currentDialouge = "";
     public int commandNum = 0;
+    public int slotCol = 0;
+    public int slotRow = 0;
 
     public UI(GamePanel gp) {
 
@@ -52,10 +55,10 @@ public class UI {
 
     }
 
-    public void showMessage(String text) {
+    public void addMessage(String text) {
 
-        message = text;
-        messageOn = true;
+        message.add(text);
+        messageCounter.add(0);
 
     }
 
@@ -63,7 +66,7 @@ public class UI {
 
         this.g2 = g2;
 
-//		g2.setFont(maruMonica);
+//	g2.setFont(maruMonica);
         g2.setFont(purisaB);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
@@ -78,6 +81,7 @@ public class UI {
         // PLAY STATE
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
+            drawMessage();
         }
 
         // PAUSE STATE
@@ -95,6 +99,7 @@ public class UI {
         // CHARACTER STATE
         if (gp.gameState == gp.characterState) {
             drawCharacterScreen();
+            drawInventory();
         }
 
     }
@@ -128,6 +133,35 @@ public class UI {
             x += gp.tileSize;
         }
 
+    }
+    
+    public void drawMessage() {
+        
+        int messageX = gp.tileSize;
+        int messageY = gp.tileSize*4;
+        g2.setFont(maruMonica.deriveFont(Font.BOLD, 32F));
+        
+        for(int i = 0; i < message.size(); i++) {
+            
+            if(message.get(i) != null) {
+                
+                g2.setColor(Color.black);
+                g2.drawString(message.get(i), messageX+2, messageY+2);
+                g2.setColor(Color.white);
+                g2.drawString(message.get(i), messageX, messageY);
+                
+                int counter = messageCounter.get(i) + 1; // messageCounter++
+                messageCounter.set(i, counter); // set the counter to the array
+                messageY += 50;
+                
+                if(messageCounter.get(i) > 180) {
+                    message.remove(i);
+                    messageCounter.remove(i);
+                }
+                
+            }
+        }
+        
     }
 
     public void drawTitleScreen() {
@@ -316,6 +350,28 @@ public class UI {
         textY += gp.tileSize;
         g2.drawImage(gp.player.currentShield.down1, tailX - gp.tileSize, textY - 14, null);
 
+    }
+    
+    public void drawInventory() {
+        
+        // FRAME
+        int framX = gp.tileSize*9;
+        int framY = gp.tileSize;
+        int frameWidth = gp.tileSize*6;
+        int frameheight = gp.tileSize*5;
+        drawSubWindow(framX, framY, frameWidth, frameheight);
+        
+        // SLOT
+        final int slotXstart = framX + 20;
+        final int slotYstart = framY + 20;
+        int slotX = slotXstart;
+        int slotY = slotYstart;
+        
+        // CURSOR
+        int cursorX = slotXstart + (gp.tileSize*slotCol);
+        int cursorY = slotYstart + (gp.tileSize*slotRow);
+        int cursorWidth = gp.tileSize;
+        int cursorHeight = gp.tileSize;
     }
 
     public void drawSubWindow(int x, int y, int width, int height) {
