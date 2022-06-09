@@ -7,7 +7,7 @@ import main.GamePanel;
 public class MON_GreenSlime extends Entity {
 
     GamePanel gp;
-    
+
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
         this.gp = gp;
@@ -24,7 +24,7 @@ public class MON_GreenSlime extends Entity {
         solidArea.height = 30;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-        
+
         getImage();
 
     }
@@ -67,6 +67,28 @@ public class MON_GreenSlime extends Entity {
             actionLockCounter = 0;
 
         }
+
+    }
+
+    public void damageReaction() {
+
+        actionLockCounter = 0;
+        direction = gp.player.direction;
+        
+//        switch (gp.player.direction) {
+//            case "up":
+//                direction = "down";
+//                break;
+//            case "down":
+//                direction = "up";
+//                break;
+//            case "left":
+//                direction = "right";
+//                break;
+//            case "right":
+//                direction = "left";
+//                break;
+//        }
 
     }
 
