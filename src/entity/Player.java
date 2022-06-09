@@ -220,19 +220,22 @@ public class Player extends Entity {
                 standCounter = 0;
             }
         }
-        
-        if(gp.keyH.shotKeyPressed && projectile.alive == false && shotAvailableCounter == 30) {
-            
+
+        if (gp.keyH.shotKeyPressed && projectile.alive == false && shotAvailableCounter == 30 && projectile.haveResource(this) == true) {
+
             // SET DEFAULT COORDINATES DIRECTION AND USER
-            projectile.set((int)worldX, (int)worldY, direction, true, this);
-            
+            projectile.set((int) worldX, (int) worldY, direction, true, this);
+
+            // SUBSTRACT THE COST (MANA, AMMO ETC.)
+            projectile.substractResource(this);
+
             // ADD IT TO LIST
             gp.projectileList.add(projectile);
-            
+
             shotAvailableCounter = 0;
-            
+
             gp.playSE(10);
-            
+
         }
 
         // This needs to be outside of key if statement!
@@ -243,7 +246,7 @@ public class Player extends Entity {
                 invincibleCounter = 0;
             }
         }
-        if(shotAvailableCounter < 30) {
+        if (shotAvailableCounter < 30) {
             shotAvailableCounter++;
         }
 
@@ -305,13 +308,27 @@ public class Player extends Entity {
 
     public void pickUpObject(int i) {
 
-        String text;
+        String text = "";
 
         if (i != 999) {
             if (inventory.size() != maxInventorySize) {
-                inventory.add(gp.obj[i]);
-                gp.playSE(1);
-                text = "Got a " + gp.obj[i].name + "!";
+
+                if (gp.obj[i].name == "Mana Crystal") {
+                    
+                    gp.player.mana++;
+                    gp.playSE(2);
+                    if(gp.player.mana > gp.player.maxMana) {
+                        gp.player.mana = gp.player.maxMana;
+                    }
+                    
+                    text = "Got a " + gp.obj[i].name + "!";
+                    
+                } else {
+                    inventory.add(gp.obj[i]);
+                    gp.playSE(1);
+                    text = "Got a " + gp.obj[i].name + "!";
+                }
+
             } else {
                 text = "You cannot carry any more!";
             }
@@ -434,7 +451,7 @@ public class Player extends Entity {
 
                 selectedItem.use(this);
                 inventory.remove(itemIndex);
-                
+
             }
 
         }
