@@ -16,7 +16,7 @@ public class Entity {
 	public double worldX, worldY;
 	public double speed;
 	public BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-	public String direction;
+	public String direction = "down";
 	public int spriteCounter = 0;
 	public int spriteNum = 1;
 	public Rectangle2D.Double solidArea = new Rectangle2D.Double(0, 0, 48, 48);
@@ -25,6 +25,9 @@ public class Entity {
 	public int actionLockCounter = 0;
 	String dialouges[] = new String[20];
 	int dialougeIndex = 0;
+	public BufferedImage image, image2, image3;
+	public String name;
+	public boolean collision = false;
 	
 	// CHARACTER STATUS
 	public int maxLife;
