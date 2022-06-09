@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import entity.Entity;
 import entity.Player;
+import java.awt.Font;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -215,7 +216,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // DEBUG
         long drawStart = 0;
-        if (keyH.checkDrawTime) {
+        if (keyH.showDebugText) {
             drawStart = System.nanoTime();
         }
 
@@ -280,12 +281,23 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         // DEBUG
-        if (keyH.checkDrawTime) {
+        if (keyH.showDebugText) {
 
             long drawEnd = System.nanoTime();
             long passed = drawEnd - drawStart;
+            
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.white);
-            g2.drawString("Draw Time: " + passed, 10, 400);
+            int x = 10;
+            int y = 400;
+            int lineHeight = 20;
+            
+            g2.drawString("WorldX " + (int)player.worldX, x, y); y += lineHeight;
+            g2.drawString("WorldY " + (int)player.worldY, x, y); y += lineHeight;
+            g2.drawString("Col " + (int)(player.worldX + player.solidArea.x)/tileSize, x, y); y += lineHeight;
+            g2.drawString("Row " + (int)(player.worldY + player.solidArea.y)/tileSize, x, y); y += lineHeight;
+            
+            g2.drawString("Draw Time: " + passed, x, y); y += lineHeight;
             System.out.println("Draw Time: " + passed);
 
         }
