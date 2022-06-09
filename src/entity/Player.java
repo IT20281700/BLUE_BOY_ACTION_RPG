@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import main.GamePanel;
 import main.KeyHandler;
+import object.OBJ_Fireball;
 import object.OBJ_Key;
 import object.OBJ_Shield_Wood;
 import object.OBJ_Sword_Normal;
@@ -61,6 +62,8 @@ public class Player extends Entity {
         level = 1;
         maxLife = 6;
         life = maxLife;
+        maxMana = 4;
+        mana = maxMana;
         strength = 1; // The more strength he has, the more damage he gives.
         dexterity = 1; // The more dexterity he has, the less damage he receives.
         exp = 0;
@@ -68,6 +71,7 @@ public class Player extends Entity {
         coin = 0;
         currentWeapon = new OBJ_Sword_Normal(gp);
         currentShield = new OBJ_Shield_Wood(gp);
+        projectile = new OBJ_Fireball(gp);
         attack = getAttack(); // The total attack value is decided by strength and weapon.
         defense = getDefense(); //  The total defense value is decided by dexterity and shield.
 
@@ -216,6 +220,20 @@ public class Player extends Entity {
                 standCounter = 0;
             }
         }
+        
+        if(gp.keyH.shotKeyPressed && projectile.alive == false && shotAvailableCounter == 30) {
+            
+            // SET DEFAULT COORDINATES DIRECTION AND USER
+            projectile.set((int)worldX, (int)worldY, direction, true, this);
+            
+            // ADD IT TO LIST
+            gp.projectileList.add(projectile);
+            
+            shotAvailableCounter = 0;
+            
+            gp.playSE(10);
+            
+        }
 
         // This needs to be outside of key if statement!
         if (invincible) {
@@ -224,6 +242,9 @@ public class Player extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+        if(shotAvailableCounter < 30) {
+            shotAvailableCounter++;
         }
 
     }
@@ -265,7 +286,7 @@ public class Player extends Entity {
             solidArea.height = attackArea.height;
             // Check monster collision with the updated worldX, worldY  and solidArea
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-            damageMonster(monsterIndex);
+            damageMonster(monsterIndex, attack);
 
             // After checking collisions,  restore the original data
             worldX = currentWorldX;
@@ -318,7 +339,7 @@ public class Player extends Entity {
 
         if (i != 999) {
 
-            if (invincible == false) {
+            if (invincible == false && gp.monster[i].dying == false) {
                 gp.playSE(6);
 
                 int damage = gp.monster[i].attack - defense;
@@ -334,7 +355,7 @@ public class Player extends Entity {
 
     }
 
-    public void damageMonster(int i) {
+    public void damageMonster(int i, int attack) {
 
         if (i != 999) {
 
@@ -411,7 +432,9 @@ public class Player extends Entity {
             }
             if (selectedItem.type == type_consumable) {
 
-                // LATER
+                selectedItem.use(this);
+                inventory.remove(itemIndex);
+                
             }
 
         }
