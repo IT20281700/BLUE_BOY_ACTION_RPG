@@ -10,8 +10,10 @@ import java.util.ArrayList;
 
 import main.GamePanel;
 import main.KeyHandler;
+import object.OBJ_Axe;
 import object.OBJ_Fireball;
 import object.OBJ_Key;
+import object.OBJ_ManaCrystal;
 import object.OBJ_Shield_Wood;
 import object.OBJ_Sword_Normal;
 
@@ -50,9 +52,10 @@ public class Player extends Entity {
         setItems();
     }
 
-    // Set player's default position
+    // Set player's default values
     public void setDefaultValues() {
 
+        // player's default position
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
         speed = 4;
@@ -69,7 +72,8 @@ public class Player extends Entity {
         exp = 0;
         nextLevelExp = 5;
         coin = 0;
-        currentWeapon = new OBJ_Sword_Normal(gp);
+//        currentWeapon = new OBJ_Sword_Normal(gp);
+        currentWeapon = new OBJ_Axe(gp);
         currentShield = new OBJ_Shield_Wood(gp);
         projectile = new OBJ_Fireball(gp);
         attack = getAttack(); // The total attack value is decided by strength and weapon.
@@ -170,6 +174,9 @@ public class Player extends Entity {
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             contactMonster(monsterIndex);
 
+            // CHECK INTERACTIVE TILE COLLISION
+            int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+
             // CHECK EVENT
             gp.eHandler.checkEvent();
 
@@ -250,6 +257,14 @@ public class Player extends Entity {
             shotAvailableCounter++;
         }
 
+        if (life > maxLife) {
+            life = maxLife;
+        }
+
+        if (mana > maxMana) {
+            mana = maxMana;
+        }
+
     }
 
     public void attacking() {
@@ -291,6 +306,9 @@ public class Player extends Entity {
             int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
             damageMonster(monsterIndex, attack);
 
+            int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+            damageInteractiveTile(iTileIndex);
+
             // After checking collisions,  restore the original data
             worldX = currentWorldX;
             worldY = currentWorldY;
@@ -308,32 +326,32 @@ public class Player extends Entity {
 
     public void pickUpObject(int i) {
 
-        String text = "";
-
         if (i != 999) {
-            if (inventory.size() != maxInventorySize) {
 
-                if (gp.obj[i].name == "Mana Crystal") {
-                    
-                    gp.player.mana++;
-                    gp.playSE(2);
-                    if(gp.player.mana > gp.player.maxMana) {
-                        gp.player.mana = gp.player.maxMana;
-                    }
-                    
-                    text = "Got a " + gp.obj[i].name + "!";
-                    
-                } else {
+            // PICKUP ONLY ITEMS
+            if (gp.obj[i].type == type_pickupOnly) {
+
+                gp.obj[i].use(this);
+                gp.obj[i] = null;
+
+            } // INVENTORY ITEMS
+            else {
+                String text = "";
+
+                if (inventory.size() != maxInventorySize) {
+
                     inventory.add(gp.obj[i]);
                     gp.playSE(1);
                     text = "Got a " + gp.obj[i].name + "!";
+
+                } else {
+                    text = "You cannot carry any more!";
                 }
 
-            } else {
-                text = "You cannot carry any more!";
+                gp.ui.addMessage(text);
+                gp.obj[i] = null;
             }
-            gp.ui.addMessage(text);
-            gp.obj[i] = null;
+
         }
 
     }
@@ -401,6 +419,21 @@ public class Player extends Entity {
 
             }
 
+        }
+
+    }
+
+    public void damageInteractiveTile(int i) {
+
+        if (i != 999 && gp.iTile[i].destructible == true && gp.iTile[i].isCorrectItem(this) == true && gp.iTile[i].invincible == false) {
+            gp.iTile[i].playSE();
+            gp.iTile[i].life--;
+            gp.iTile[i].invincible = true;
+            
+            if(gp.iTile[i].life == 0) {
+                gp.iTile[i] = gp.iTile[i].getDestroyedForm();
+            }
+            
         }
 
     }

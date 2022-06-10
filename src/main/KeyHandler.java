@@ -57,7 +57,7 @@ public class KeyHandler implements KeyListener {
             switch (gp.ui.commandNum) {
                 case 0:
                     gp.gameState = gp.playState;
-                    gp.playMusic(0);
+                    //gp.playMusic(0);
                     break;
                 case 1:
                     // LOAD GAME
@@ -70,7 +70,7 @@ public class KeyHandler implements KeyListener {
     }
 
     public void playState(int code) {
-// PLAYER CONTROLLER
+        // PLAYER CONTROLLER
         if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) {
             upPressed = true;
         }
@@ -159,9 +159,9 @@ public class KeyHandler implements KeyListener {
             }
         }
         if (code == KeyEvent.VK_ENTER) {
-            
+
             gp.player.selectItem();
-            
+
         }
     }
 
