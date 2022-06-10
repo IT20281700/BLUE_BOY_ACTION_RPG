@@ -1,0 +1,4 @@
+[BLUE BOY CONFIG FILE]
+Off
+2
+1
