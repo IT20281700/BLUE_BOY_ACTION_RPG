@@ -73,7 +73,7 @@ public class Player extends Entity {
 		nextLevelExp = 5;
 		coin = 0;
 //        currentWeapon = new OBJ_Sword_Normal(gp);
-		currentWeapon = new OBJ_Axe(gp);
+		currentWeapon = new OBJ_Sword_Normal(gp);
 		currentShield = new OBJ_Shield_Wood(gp);
 		projectile = new OBJ_Fireball(gp);
 		attack = getAttack(); // The total attack value is decided by strength and weapon.

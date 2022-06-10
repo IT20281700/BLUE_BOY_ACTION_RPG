@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,9 +31,9 @@ public class GamePanel extends JPanel implements Runnable {
 	final int scale = 3;
 
 	public int tileSize = originalTileSize * scale; // 48x48 tile
-	public int maxScreenCol = 16;
+	public int maxScreenCol = 20;
 	public int maxScreenRow = 12;
-	public int screenWidth = tileSize * maxScreenCol; // 768px
+	public int screenWidth = tileSize * maxScreenCol; // 960px
 	public int screenHeight = tileSize * maxScreenRow; // 576px
 
 	// WORLD MAP SETTINGS
@@ -38,6 +41,13 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int maxWorldRow = 50;
 	public final int worldWidth = tileSize * maxWorldCol;
 	public final int worldHeight = tileSize * maxWorldRow;
+
+	// FOR FULL SCREEN
+	int screenWidth2 = screenWidth;
+	int screenHeight2 = screenHeight;
+	BufferedImage tempScreen;
+	Graphics2D g2;
+	public boolean fullScreenOn = false;
 
 	// FPS
 	int FPS = 60;
@@ -70,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int pauseState = 2;
 	public final int dialougeState = 3;
 	public final int characterState = 4;
+	public final int optionState = 5;
 
 	public GamePanel() {
 
@@ -89,6 +100,11 @@ public class GamePanel extends JPanel implements Runnable {
 		aSetter.setInteractiveTile();
 //		playMusic(0);
 		gameState = titleState;
+
+		tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
+		g2 = (Graphics2D)tempScreen.getGraphics();
+		
+//		setFullScreen();
 
 	}
 
@@ -137,6 +153,20 @@ public class GamePanel extends JPanel implements Runnable {
 //		player.solidArea.height = newPlayerSolidHeight;
 //		
 //	}
+	
+	public void setFullScreen() {
+		
+		// GET LOCAL SCREEN DEVICE
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getDefaultScreenDevice();
+		gd.setFullScreenWindow(Main.window);
+		
+		// GET SCREEN WIDTH AND HEIGT
+		screenWidth2 = Main.window.getWidth();
+		screenHeight2 = Main.window.getHeight();
+		
+	}
+	
 	public void startGameThread() {
 
 		gameThread = new Thread(this);
@@ -167,7 +197,9 @@ public class GamePanel extends JPanel implements Runnable {
 				// 1 UPDATE: update the information such as character positions
 				update();
 				// 2 DRAW: draw the screen with the updated information
-				repaint();
+//				repaint();
+				drawToTempScreen(); // draw everything to buffered image
+				drawToScreen(); // draw image to screen
 
 				delta--;
 				drawCount++;
@@ -245,11 +277,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 	}
 
-	public void paintComponent(Graphics g) {
-
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
-
+	public void drawToTempScreen() {
 		// DEBUG
 		long drawStart = 0;
 		if (keyH.showDebugText) {
@@ -363,10 +391,139 @@ public class GamePanel extends JPanel implements Runnable {
 			System.out.println("Draw Time: " + passed);
 
 		}
-
-		g2.dispose();
-
 	}
+
+	public void drawToScreen() {
+		
+		Graphics g = getGraphics();
+		g.drawImage(tempScreen, 0, 0, screenWidth2, screenHeight2, null);
+		g.dispose();
+		
+		
+	}
+	
+//	public void paintComponent(Graphics g) {
+//
+//		super.paintComponent(g);
+//		Graphics2D g2 = (Graphics2D) g;
+//
+//		// DEBUG
+//		long drawStart = 0;
+//		if (keyH.showDebugText) {
+//			drawStart = System.nanoTime();
+//		}
+//
+//		// TITILE SCREEN
+//		if (gameState == titleState) {
+//
+//			ui.draw(g2);
+//
+//		} // OTHERS
+//		else {
+//
+//			// TILES
+//			tileManager.draw(g2);
+//
+//			// INTERACTIVE TILES
+//			for (int i = 0; i < iTile.length; i++) {
+//				if (iTile[i] != null) {
+//					iTile[i].draw(g2);
+//				}
+//			}
+//
+//			// ADD ENTITIES TO THE LIST
+//			// player
+//			entityList.add(player);
+//
+//			// npcs
+//			for (int i = 0; i < npc.length; i++) {
+//				if (npc[i] != null) {
+//					entityList.add(npc[i]);
+//				}
+//			}
+//
+//			// objects
+//			for (int i = 0; i < obj.length; i++) {
+//				if (obj[i] != null) {
+//					entityList.add(obj[i]);
+//				}
+//			}
+//
+//			// monsters
+//			for (int i = 0; i < monster.length; i++) {
+//				if (monster[i] != null) {
+//					entityList.add(monster[i]);
+//				}
+//			}
+//
+//			// projectitle
+//			for (int i = 0; i < projectileList.size(); i++) {
+//				if (projectileList.get(i) != null) {
+//					entityList.add(projectileList.get(i));
+//				}
+//			}
+//			
+//			// particles
+//            for (int i = 0; i < particleList.size(); i++) {
+//                if (particleList.get(i) != null) {
+//                    entityList.add(particleList.get(i));
+//                }
+//            }
+//
+//			// SORT
+//			Collections.sort(entityList, new Comparator<Entity>() {
+//
+//				@Override
+//				public int compare(Entity e1, Entity e2) {
+//
+//					int result = Integer.compare((int) e1.worldY, (int) e2.worldY);
+//					return result;
+//				}
+//
+//			});
+//
+//			// DRAW ENTITIES
+//			for (int i = 0; i < entityList.size(); i++) {
+//				entityList.get(i).draw(g2);
+//			}
+//			// EMPTY LIST
+//			entityList.clear();
+//
+//			// UI
+//			ui.draw(g2);
+//
+//		}
+//
+//		// DEBUG
+//		if (keyH.showDebugText) {
+//
+//			long drawEnd = System.nanoTime();
+//			long passed = drawEnd - drawStart;
+//
+//			g2.setFont(new Font("Arial", Font.PLAIN, 20));
+//			g2.setColor(Color.white);
+//			int x = 10;
+//			int y = 400;
+//			int lineHeight = 20;
+//
+//			g2.drawString("WorldX " + (int) player.worldX, x, y);
+//			y += lineHeight;
+//			g2.drawString("WorldY " + (int) player.worldY, x, y);
+//			y += lineHeight;
+//			g2.drawString("Col " + (int) (player.worldX + player.solidArea.x) / tileSize, x, y);
+//			y += lineHeight;
+//			g2.drawString("Row " + (int) (player.worldY + player.solidArea.y) / tileSize, x, y);
+//			y += lineHeight;
+//
+//			g2.drawString("Draw Time: " + passed, x, y);
+//			y += lineHeight;
+//			System.out.println("Draw Time: " + passed);
+//
+//		}
+//
+//		g2.dispose();
+//
+//	}
 
 	// MUSIC PLAYER
 	public void playMusic(int i) {
