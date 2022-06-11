@@ -51,13 +51,10 @@ public class Player extends Entity {
 	public void setDefaultValues() {
 
 		// player's default position
-//		worldX = gp.tileSize * 23;
-//		worldY = gp.tileSize * 21;
-		worldX = gp.tileSize * 12;
-		worldY = gp.tileSize * 12;
+		worldX = gp.tileSize * 23;
+		worldY = gp.tileSize * 21;
 		speed = 4;
 		direction = "down";
-		gp.currentMap = 1;
 
 		// PLAYER STATUS
 		level = 1;
@@ -190,7 +187,7 @@ public class Player extends Entity {
 			contactMonster(monsterIndex);
 
 			// CHECK INTERACTIVE TILE COLLISION
-//			int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
+			int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
 
 			// CHECK EVENT
 			gp.eHandler.checkEvent();
