@@ -140,6 +140,16 @@ public class EventHandler {
 			// eventRect[col][row].eventDone = true;
 			canTouchEvent = false;
 			gp.aSetter.setMonster();
+			
+			// upgrade monster defence
+			if(gp.monster[1] != null) {
+				for(int i = 0; i < gp.monster[gp.currentMap].length; i++) {
+					if(gp.monster[gp.currentMap][i] != null) {
+						gp.monster[gp.currentMap][i].defense += 2;
+					}
+				}
+				System.out.println("Mon Defense: " +gp.monster[gp.currentMap][0].defense);
+			}
 		}
 
 	}
