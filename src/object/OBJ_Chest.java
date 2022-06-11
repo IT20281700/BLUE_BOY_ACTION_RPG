@@ -39,12 +39,11 @@ public class OBJ_Chest extends Entity {
 			StringBuilder sBuilder = new StringBuilder();
 			sBuilder.append("You open the chest and find a "+ loot.name + "!");
 			
-			if(gp.player.inventory.size() == gp.player.maxInventorySize) {
+			if(gp.player.canobtainItem(loot) == false) {
 				sBuilder.append("\n....But you cannot carry any more!");
 			}
 			else {
 				sBuilder.append("\nYou obtain the "+loot.name+ "!");
-				gp.player.inventory.add(loot);
 				down1 = image2;
 				opened = true;
 			}

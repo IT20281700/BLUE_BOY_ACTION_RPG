@@ -462,6 +462,24 @@ public class UI {
 
 			g2.drawImage(entity.inventory.get(i).down1, slotX, slotY, null);
 
+			// DISPLAY THE AMOUNT
+			if (entity == gp.player && entity.inventory.get(i).amount > 1) {
+				g2.setFont(maruMonica.deriveFont(32f));
+				int amountX;
+				int amountY;
+
+				String s = "" + entity.inventory.get(i).amount;
+				amountX = getXforAlignToRight(s, slotX + 44);
+				amountY = slotY + gp.tileSize;
+
+				// SHADOW
+				g2.setColor(new Color(60, 60, 60));
+				g2.drawString(s, amountX, amountY);
+				// NUMBER
+				g2.setColor(Color.white);
+				g2.drawString(s, amountX - 3, amountY - 3);
+			}
+
 			slotX += slotSize;
 
 			if (i == 4 || i == 9 || i == 14) {
@@ -929,13 +947,16 @@ public class UI {
 					gp.gameState = gp.dialougeState;
 					currentDialouge = "You need more coin to buy that!";
 					drawDialougeScreen();
-				} else if (gp.player.inventory.size() == gp.player.maxInventorySize) {
-					subState = 0;
-					gp.gameState = gp.dialougeState;
-					currentDialouge = "You cannot carry any more!";
-				} else {
-					gp.player.coin -= npc.inventory.get(itemIndex).price;
-					gp.player.inventory.add(npc.inventory.get(itemIndex));
+				} 
+				else {
+					if(gp.player.canobtainItem(npc.inventory.get(itemIndex)) == true) {
+						gp.player.coin -= npc.inventory.get(itemIndex).price;
+					}
+					else {
+						subState = 0;
+						gp.gameState = gp.dialougeState;
+						currentDialouge = "You cannot carry any more!";
+					}
 				}
 			}
 
@@ -983,23 +1004,26 @@ public class UI {
 			x += 40;
 			g2.drawString("x", x, y + 32);
 
-			int price = gp.player.inventory.get(itemIndex).price/2;
+			int price = gp.player.inventory.get(itemIndex).price / 2;
 			String text = "" + price;
 			x = getXforAlignToRight(text, gp.tileSize * 18 - 20);
 			g2.drawString(text, x, y + 34);
 
 			// SELL AN ITEM
 			if (gp.keyH.enterPressed == true) {
-				
-				if(gp.player.inventory.get(itemIndex) == gp.player.currentWeapon 
+
+				if (gp.player.inventory.get(itemIndex) == gp.player.currentWeapon
 						|| gp.player.inventory.get(itemIndex) == gp.player.currentShield) {
 					commandNum = 0;
 					subState = 0;
 					gp.gameState = gp.dialougeState;
 					currentDialouge = "You cannot sell an equiped item!";
-				}
-				else {
-					gp.player.inventory.remove(itemIndex);
+				} else {
+					if(gp.player.inventory.get(itemIndex).amount > 1) {
+						gp.player.inventory.get(itemIndex).amount--;
+					} else {
+						gp.player.inventory.remove(itemIndex);
+					}
 					gp.player.coin += price;
 				}
 			}
