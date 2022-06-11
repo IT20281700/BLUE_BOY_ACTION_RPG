@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -65,11 +66,14 @@ public class Entity {
     public Projectile projectile;
     
     // ITEM ATTRIBUTES
+	public ArrayList<Entity> inventory = new ArrayList<>();
+	public final int maxInventorySize = 20;
     public int value;
     public int attackValue;
     public int defenseValue;
     public String description = "";
     public int useCost;
+    public int price;
     
     // TYPES
     public int type; // 0 = player, 1 = npc, 2 = monster
@@ -124,11 +128,11 @@ public class Entity {
     
     public void dropItem(Entity droppedItem) {
     
-        for(int i = 0; i < gp.obj.length; i++) {
-            if(gp.obj[i] == null) {
-                gp.obj[i] = droppedItem;
-                gp.obj[i].worldX = worldX; // the dead monster location X
-                gp.obj[i].worldY = worldY; // the dead monster location Y
+        for(int i = 0; i < gp.obj[1].length; i++) {
+            if(gp.obj[gp.currentMap][i] == null) {
+                gp.obj[gp.currentMap][i] = droppedItem;
+                gp.obj[gp.currentMap][i].worldX = worldX; // the dead monster location X
+                gp.obj[gp.currentMap][i].worldY = worldY; // the dead monster location Y
                 break;
             }
         } 
@@ -212,7 +216,7 @@ public class Entity {
         }
 
         spriteCounter++;
-        if (spriteCounter > 12) {
+        if (spriteCounter > 24) {
             if (spriteNum == 1) {
                 spriteNum = 2;
             } else if (spriteNum == 2) {
@@ -327,8 +331,26 @@ public class Entity {
             if (dying) {
                 dyingAnimation(g2);
             }
+            
+            int x = (int) screenX;
+    		int y = (int) screenY;
 
-            g2.drawImage(image, (int) screenX, (int) screenY, null);
+    		if (screenX > worldX) {
+    			x = (int) worldX;
+    		}
+    		if (screenY > worldY) {
+    			y = (int) worldY;
+    		}
+    		int rightOffset = (int) (gp.screenWidth - screenX);
+    		if (rightOffset > gp.worldWidth - worldX) {
+    			x = (int) (gp.screenWidth - (gp.worldWidth - worldX));
+    		}
+    		int bottomOffset = (int) (gp.screenHeight - screenY);
+    		if (bottomOffset > gp.worldHeight - worldY) {
+    			y = (int) (gp.screenHeight - (gp.worldHeight - worldY));
+    		}
+
+            g2.drawImage(image, x, y, null);
             changeAlpha(g2, 1f);
 
         }

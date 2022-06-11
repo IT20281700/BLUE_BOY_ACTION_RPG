@@ -67,13 +67,31 @@ public class IT_DryTree extends InteractiveTile {
 
 		double screenX = worldX - gp.player.worldX + gp.player.screenX;
 		double screenY = worldY - gp.player.worldY + gp.player.screenY;
+		
+		int x = (int) screenX;
+		int y = (int) screenY;
+
+		if (screenX > worldX) {
+			x = (int) worldX;
+		}
+		if (screenY > worldY) {
+			y = (int) worldY;
+		}
+		int rightOffset = (int) (gp.screenWidth - screenX);
+		if (rightOffset > gp.worldWidth - worldX) {
+			x = (int) (gp.screenWidth - (gp.worldWidth - worldX));
+		}
+		int bottomOffset = (int) (gp.screenHeight - screenY);
+		if (bottomOffset > gp.worldHeight - worldY) {
+			y = (int) (gp.screenHeight - (gp.worldHeight - worldY));
+		}
 
 		if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX
 				&& worldX - gp.tileSize < gp.player.worldX + gp.player.screenX
 				&& worldY + gp.tileSize > gp.player.worldY - gp.player.screenY
 				&& worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
 
-			g2.drawImage(down1, (int) screenX, (int) screenY, null);
+			g2.drawImage(down1, (int) x, (int) y, null);
 
 		}
 	}
