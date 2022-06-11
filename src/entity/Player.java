@@ -14,6 +14,7 @@ import object.OBJ_Axe;
 import object.OBJ_Fireball;
 import object.OBJ_Key;
 import object.OBJ_ManaCrystal;
+import object.OBJ_Potion_Red;
 import object.OBJ_Shield_Wood;
 import object.OBJ_Sword_Normal;
 
@@ -53,7 +54,8 @@ public class Player extends Entity {
 		// player's default position
 		worldX = gp.tileSize * 23;
 		worldY = gp.tileSize * 21;
-		speed = 4;
+		defaultSpeed = 4;
+		speed = defaultSpeed;
 		direction = "down";
 
 		// PLAYER STATUS
@@ -331,7 +333,7 @@ public class Player extends Entity {
 			solidArea.height = attackArea.height;
 			// Check monster collision with the updated worldX, worldY and solidArea
 			int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
-			damageMonster(monsterIndex, attack);
+			damageMonster(monsterIndex, attack, currentWeapon.knockBackPower);
 
 			int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
 			damageInteractiveTile(iTileIndex);
@@ -364,7 +366,15 @@ public class Player extends Entity {
 				gp.obj[gp.currentMap][i].use(this); // FIXED
 				gp.obj[gp.currentMap][i] = null; // FIXED
 
-			} // INVENTORY ITEMS
+			}
+			// OBSTACLE
+			else if(gp.obj[gp.currentMap][i].type == type_obstacle) {
+				if(keyH.enterPressed == true) {
+					attackCanceled = true;
+					gp.obj[gp.currentMap][i].interact();
+				}
+			}
+			// INVENTORY ITEMS
 			else {
 				String text = "";
 
@@ -420,13 +430,17 @@ public class Player extends Entity {
 
 	}
 
-	public void damageMonster(int i, int attack) {
+	public void damageMonster(int i, int attack, int knockBackPower) {
 
 		if (i != 999) {
 
 			if (gp.monster[gp.currentMap][i].invincible == false) { // FIXED
 
 				gp.playSE(5);
+				
+				if(knockBackPower > 0) {
+					knockBack(gp.monster[gp.currentMap][i], knockBackPower);
+				}
 
 				int damage = attack - gp.monster[gp.currentMap][i].defense; // FIXED
 				if (damage < 0) {
@@ -453,6 +467,14 @@ public class Player extends Entity {
 
 	}
 
+	public void knockBack(Entity entity, int knockBackPower) {
+		
+		entity.direction = direction;
+		entity.speed += knockBackPower;
+		entity.knockBack = true;
+		
+	}
+	
 	public void damageInteractiveTile(int i) {
 
 		if (i != 999 && gp.iTile[gp.currentMap][i].destructible == true && gp.iTile[gp.currentMap][i].isCorrectItem(this) == true 
@@ -526,9 +548,10 @@ public class Player extends Entity {
 			}
 			if (selectedItem.type == type_consumable) {
 
-				selectedItem.use(this);
-				inventory.remove(itemIndex);
-
+				if(selectedItem.use(this) == true) {
+					inventory.remove(itemIndex);
+				}
+				
 			}
 
 		}

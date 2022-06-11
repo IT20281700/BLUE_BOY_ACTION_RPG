@@ -21,7 +21,7 @@ public class OBJ_Potion_Red extends Entity{
 
     }
 
-    public void use(Entity entity) {
+    public boolean use(Entity entity) {
 
         gp.gameState = gp.dialougeState;
         gp.ui.currentDialouge = "You drink the " + name + "!\n"
@@ -31,6 +31,7 @@ public class OBJ_Potion_Red extends Entity{
             gp.player.life = gp.player.maxLife;
         }
         gp.playSE(2);
+        return true;
 
     }
     
